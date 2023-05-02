@@ -1,5 +1,10 @@
-import { AppBskyActorDefs, BskyAgent } from "@atproto/api";
+import { type AppBskyActorDefs, BskyAgent } from "@atproto/api";
+
 import Link from "next/link";
+
+const agent = new BskyAgent({
+  service: "https://bsky.social",
+});
 
 const bskyTeam = [
   "jay.bsky.team",
@@ -14,10 +19,6 @@ const bskyTeam = [
   "emily.bsky.team",
 ];
 
-const agent = new BskyAgent({
-  service: "https://bsky.social",
-});
-
 type Props = {
   searchParams?: {
     handle?: string;
@@ -31,7 +32,7 @@ export default async function Home({ searchParams }: Props) {
         identifier: process.env.BSKY_USERNAME!,
         password: process.env.BSKY_PASSWORD!,
       });
-
+      
       const handle = searchParams.handle;
 
       let cursor: string | undefined;
@@ -71,6 +72,7 @@ export default async function Home({ searchParams }: Props) {
         </main>
       );
     }
+
     return (
       <main className="min-h-screen">
         <div className="p-8 min-h-screen container flex flex-col items-center justify-center gap-8">
@@ -90,7 +92,6 @@ export default async function Home({ searchParams }: Props) {
       </main>
     );
   } catch (err) {
-    console.error(err);
     return (
       <main className="min-h-screen">
         <div className="p-8 min-h-screen container flex flex-col items-center justify-center gap-8">
