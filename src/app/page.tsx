@@ -32,7 +32,7 @@ export default async function Home({ searchParams }: Props) {
         identifier: process.env.BSKY_USERNAME!,
         password: process.env.BSKY_PASSWORD!,
       });
-      
+
       const handle = searchParams.handle;
 
       let cursor: string | undefined;
@@ -76,7 +76,7 @@ export default async function Home({ searchParams }: Props) {
     return (
       <main className="min-h-screen">
         <div className="p-8 min-h-screen container flex flex-col items-center justify-center gap-8">
-          <h2>See how many Bluesky team members are following you</h2>
+          <h1>See how many Bluesky team members are following you</h1>
           <form className="flex items-stretch border rounded">
             <input
               type="text"
