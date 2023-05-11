@@ -17,7 +17,6 @@ const bskyTeam = [
   "why.bsky.team",
   "jacob.gold",
   "emily.bsky.team",
-  "renahlee.com",
 ];
 
 type Props = {
