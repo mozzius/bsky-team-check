@@ -17,6 +17,10 @@ const bskyTeam = [
   "why.bsky.team",
   "jacob.gold",
   "emily.bsky.team",
+  "jaz.bsky.social",
+  "esb.lol",
+  "foysal.codes",
+  "danabramov.bsky.social",
 ];
 
 type Props = {
