@@ -59,7 +59,7 @@ export default async function Home({ searchParams }: Props) {
               {bskyTeam.map((person) => (
                 <li key={person}>
                   <a
-                    href={`https://staging.bsky.app/profile/${person}`}
+                    href={`https://bsky.app/profile/${person}`}
                     target="_blank"
                     rel="noreferrer"
                   >
