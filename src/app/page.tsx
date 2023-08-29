@@ -1,4 +1,6 @@
+/* eslint-disable @next/next/no-img-element */
 import { type AppBskyActorDefs, BskyAgent } from "@atproto/api";
+import { CheckIcon, ChevronLeft, XIcon } from "lucide-react";
 
 import Link from "next/link";
 
@@ -39,6 +41,10 @@ export default async function Home({ searchParams }: Props) {
 
       const handle = searchParams.handle;
 
+      const requester = await agent.getProfile({
+        actor: handle,
+      });
+
       let cursor: string | undefined;
       let following: AppBskyActorDefs.ProfileView[] = [];
 
@@ -53,24 +59,59 @@ export default async function Home({ searchParams }: Props) {
       }
 
       return (
-        <main className="min-h-screen">
-          <div className="p-8 min-h-screen container flex flex-col items-center justify-center gap-8">
+        <main className="min-h-screen grid place-items-center">
+          <div className="flex flex-col gap-8 w-full max-w-sm py-8 px-2">
+            <div>
+              <p className="text-sm">How many bsky devs are following</p>
+              <div className="flex items-center gap-2 mt-2 rounded border p-2 w-full">
+                <img
+                  src={requester.data.avatar}
+                  alt={
+                    requester.data.displayName ?? "@" + requester.data.handle
+                  }
+                  className="w-10 h-10 rounded-full bg-neutral-300"
+                />
+                <div>
+                  {requester.data.displayName && (
+                    <p className="font-medium">{requester.data.displayName}</p>
+                  )}
+                  <p className="text-neutral-400 text-xs">
+                    @{requester.data.handle}
+                  </p>
+                </div>
+              </div>
+            </div>
             <ul>
-              {bskyTeam.map((person) => (
-                <li key={person}>
-                  <a
-                    href={`https://bsky.app/profile/${person}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    {person}{" "}
-                    {following.find((f) => f.handle === person) ? "✅" : "❌"}
-                  </a>
-                </li>
-              ))}
+              {bskyTeam
+                .sort(
+                  (a, b) =>
+                    ((following.find((f) => f.handle === a) ? 1 : -1) -
+                      (following.find((f) => f.handle === b) ? 1 : -1)) *
+                    -1
+                )
+                .map((person) => (
+                  <li key={person}>
+                    <a
+                      href={`https://bsky.app/profile/${person}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center gap-1 hover:underline"
+                    >
+                      {following.find((f) => f.handle === person) ? (
+                        <CheckIcon className="text-green-500" />
+                      ) : (
+                        <XIcon className="text-red-500" />
+                      )}
+                      {person}
+                    </a>
+                  </li>
+                ))}
             </ul>
-            <Link href="/" className="mt-8">
-              Back
+            <Link
+              href="/"
+              className="flex items-center mx-auto hover:underline"
+            >
+              <ChevronLeft size={18} /> Back
             </Link>
           </div>
         </main>
@@ -100,8 +141,8 @@ export default async function Home({ searchParams }: Props) {
       <main className="min-h-screen">
         <div className="p-8 min-h-screen container flex flex-col items-center justify-center gap-8">
           <p>Error: {(err as Error).message}</p>
-          <Link href="/" className="mt-8">
-            Back
+          <Link href="/" className="flex items-center mt-8 hover:underline">
+            <ChevronLeft size={18} /> Back
           </Link>
         </div>
       </main>
