@@ -22,7 +22,7 @@ const bskyTeam = [
   "jaz.bsky.social",
   "esb.lol",
   "foysal.codes",
-  "danabramov.bsky.social",
+  "danabra.mov",
 ];
 
 type Props = {
