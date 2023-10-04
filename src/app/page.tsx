@@ -14,7 +14,7 @@ const bskyTeam = [
   "divy.zone",
   "dholms.xyz",
   "ansh.bsky.team",
-  "bnewbold.bsky.team",
+  "bnewbold.net",
   "rose.bsky.team",
   "why.bsky.team",
   "jacob.gold",
