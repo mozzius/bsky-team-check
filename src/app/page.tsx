@@ -34,7 +34,7 @@ type Props = {
 export default async function Home({ searchParams }: Props) {
   try {
     if (searchParams?.handle) {
-      const handle = searchParams.handle;
+      const handle = searchParams.handle.startsWith("@") ? searchParams.handle.slice(1) : searchParams.handle;
 
       const requester = await agent.getProfile({
         actor: handle,
