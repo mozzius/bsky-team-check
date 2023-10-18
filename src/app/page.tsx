@@ -5,7 +5,7 @@ import { CheckIcon, ChevronLeft, XIcon } from "lucide-react";
 import Link from "next/link";
 
 const agent = new BskyAgent({
-  service: "https://bsky.social",
+  service: "https://api.bsky.app",
 });
 
 const bskyTeam = [
@@ -34,11 +34,6 @@ type Props = {
 export default async function Home({ searchParams }: Props) {
   try {
     if (searchParams?.handle) {
-      await agent.login({
-        identifier: process.env.BSKY_USERNAME!,
-        password: process.env.BSKY_PASSWORD!,
-      });
-
       const handle = searchParams.handle;
 
       const requester = await agent.getProfile({
