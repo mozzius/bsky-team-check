@@ -23,6 +23,7 @@ const bskyTeam = [
   "esb.lol",
   "foysal.codes",
   "danabra.mov",
+  "haileyok.com",
 ];
 
 type Props = {
