@@ -1,8 +1,53 @@
 /* eslint-disable @next/next/no-img-element */
-import { type AppBskyActorDefs, BskyAgent } from "@atproto/api";
+import {
+  type AppBskyActorDefs,
+  BskyAgent,
+  stringifyLex,
+  jsonToLex,
+} from "@atproto/api";
 import { CheckIcon, ChevronLeft, XIcon } from "lucide-react";
 
 import Link from "next/link";
+
+BskyAgent.configure({
+  fetch: async (reqUri, reqMethod, reqHeaders, reqBody) => {
+    const reqMimeType =
+      reqHeaders["Content-Type"] || reqHeaders["content-type"];
+    if (reqMimeType && reqMimeType.startsWith("application/json")) {
+      reqBody = stringifyLex(reqBody);
+    }
+    const res = await fetch(reqUri, {
+      method: reqMethod,
+      headers: reqHeaders,
+      body: reqBody,
+      cache: "no-cache",
+    });
+
+    const resStatus = res.status;
+    const resHeaders: Record<string, string> = {};
+    res.headers.forEach((value: string, key: string) => {
+      resHeaders[key] = value;
+    });
+    const resMimeType =
+      resHeaders["Content-Type"] || resHeaders["content-type"];
+    let resBody;
+    if (resMimeType) {
+      if (resMimeType.startsWith("application/json")) {
+        resBody = jsonToLex(await res.json());
+      } else if (resMimeType.startsWith("text/")) {
+        resBody = await res.text();
+      } else {
+        throw new Error("TODO: non-textual response body");
+      }
+    }
+
+    return {
+      status: resStatus,
+      headers: resHeaders,
+      body: resBody,
+    };
+  },
+});
 
 const agent = new BskyAgent({
   service: "https://api.bsky.app",
@@ -35,7 +80,9 @@ type Props = {
 export default async function Home({ searchParams }: Props) {
   try {
     if (searchParams?.handle) {
-      const handle = searchParams.handle.startsWith("@") ? searchParams.handle.slice(1) : searchParams.handle;
+      const handle = searchParams.handle.startsWith("@")
+        ? searchParams.handle.slice(1)
+        : searchParams.handle;
 
       const requester = await agent.getProfile({
         actor: handle,
