@@ -1,57 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
-import {
-  type AppBskyActorDefs,
-  BskyAgent,
-  stringifyLex,
-  jsonToLex,
-} from "@atproto/api";
+import { type AppBskyActorDefs } from "@atproto/api";
 import { CheckIcon, ChevronLeft, XIcon } from "lucide-react";
 
 import Link from "next/link";
+import { getAgent } from "~/lib/agent";
 
-BskyAgent.configure({
-  fetch: async (reqUri, reqMethod, reqHeaders, reqBody) => {
-    const reqMimeType =
-      reqHeaders["Content-Type"] || reqHeaders["content-type"];
-    if (reqMimeType && reqMimeType.startsWith("application/json")) {
-      reqBody = stringifyLex(reqBody);
-    }
-    const res = await fetch(reqUri, {
-      method: reqMethod,
-      headers: reqHeaders,
-      body: reqBody,
-      cache: "no-cache",
-    });
-
-    const resStatus = res.status;
-    const resHeaders: Record<string, string> = {};
-    res.headers.forEach((value: string, key: string) => {
-      resHeaders[key] = value;
-    });
-    const resMimeType =
-      resHeaders["Content-Type"] || resHeaders["content-type"];
-    let resBody;
-    if (resMimeType) {
-      if (resMimeType.startsWith("application/json")) {
-        resBody = jsonToLex(await res.json());
-      } else if (resMimeType.startsWith("text/")) {
-        resBody = await res.text();
-      } else {
-        throw new Error("TODO: non-textual response body");
-      }
-    }
-
-    return {
-      status: resStatus,
-      headers: resHeaders,
-      body: resBody,
-    };
-  },
-});
-
-const agent = new BskyAgent({
-  service: "https://api.bsky.app",
-});
+const agent = getAgent();
 
 const bskyTeam = [
   "jay.bsky.team",
@@ -80,72 +34,73 @@ type Props = {
 export default async function Home({ searchParams }: Props) {
   try {
     if (searchParams?.handle) {
-      const handle = searchParams.handle.startsWith("@")
+      const actor = searchParams.handle.startsWith("@")
         ? searchParams.handle.slice(1)
         : searchParams.handle;
 
-      const requester = await agent.getProfile({
-        actor: handle,
+      const profile = await agent.getProfile({ actor });
+
+      const team = await agent.getProfiles({ actors: bskyTeam });
+
+      const relationships = await agent.app.bsky.graph.getRelationships({
+        actor: profile.data.did,
+        others: team.data.profiles.map((p) => p.did),
       });
-
-      let cursor: string | undefined;
-      let following: AppBskyActorDefs.ProfileView[] = [];
-
-      while (true) {
-        const { data } = await agent.getFollowers({
-          actor: handle,
-          cursor,
-        });
-        cursor = data.cursor;
-        following = following.concat(...data.followers);
-        if (data.followers.length === 0) break;
-      }
 
       return (
         <main className="min-h-screen grid place-items-center">
           <div className="flex flex-col gap-8 w-full max-w-sm py-8 px-2">
             <div>
-              <p className="text-sm">How many bsky devs are following</p>
+              <p className="text-sm">How many Bluesky team members are following</p>
               <div className="flex items-center gap-2 mt-2 rounded border p-2 w-full">
                 <img
-                  src={requester.data.avatar}
-                  alt={
-                    requester.data.displayName ?? "@" + requester.data.handle
-                  }
+                  src={profile.data.avatar}
+                  alt={profile.data.displayName ?? "@" + profile.data.handle}
                   className="w-10 h-10 rounded-full bg-neutral-300"
                 />
                 <div>
-                  {requester.data.displayName && (
-                    <p className="font-medium">{requester.data.displayName}</p>
+                  {profile.data.displayName && (
+                    <p className="font-medium">{profile.data.displayName}</p>
                   )}
                   <p className="text-neutral-400 text-xs">
-                    @{requester.data.handle}
+                    @{profile.data.handle}
                   </p>
                 </div>
               </div>
             </div>
             <ul>
-              {bskyTeam
+              {team.data.profiles
                 .sort(
                   (a, b) =>
-                    ((following.find((f) => f.handle === a) ? 1 : -1) -
-                      (following.find((f) => f.handle === b) ? 1 : -1)) *
+                    ((relationships.data.relationships.find(
+                      (f) => f.did === a.did
+                    )?.followedBy
+                      ? 1
+                      : -1) -
+                      (relationships.data.relationships.find(
+                        (f) => f.did === b.did
+                      )?.followedBy
+                        ? 1
+                        : -1)) *
                     -1
                 )
+                .filter((person) => person.handle !== profile.data.handle)
                 .map((person) => (
-                  <li key={person}>
+                  <li key={person.did}>
                     <a
-                      href={`https://bsky.app/profile/${person}`}
+                      href={`https://bsky.app/profile/${person.handle}`}
                       target="_blank"
                       rel="noreferrer"
                       className="flex items-center gap-1 hover:underline"
                     >
-                      {following.find((f) => f.handle === person) ? (
+                      {relationships.data.relationships.find(
+                        (f) => f.did === person.did
+                      )?.followedBy ? (
                         <CheckIcon className="text-green-500" />
                       ) : (
                         <XIcon className="text-red-500" />
                       )}
-                      {person}
+                      {person.handle}
                     </a>
                   </li>
                 ))}
