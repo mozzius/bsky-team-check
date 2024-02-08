@@ -17,12 +17,13 @@ const bskyTeam = [
   "rose.bsky.team",
   "why.bsky.team",
   "jacob.gold",
-  "emily.bsky.team",
+  "emilyliu.me",
   "jaz.bsky.social",
   "esb.lol",
   "foysal.codes",
   "danabra.mov",
   "haileyok.com",
+  "jessica.bsky.team",
 ];
 
 type Props = {
