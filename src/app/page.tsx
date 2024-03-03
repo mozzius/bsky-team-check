@@ -23,6 +23,7 @@ const bskyTeam = [
   "danabra.mov",
   "haileyok.com",
   "jessica.bsky.team",
+  "aaron.bsky.team",
 ];
 
 type Props = {
