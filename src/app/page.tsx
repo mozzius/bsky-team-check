@@ -24,6 +24,7 @@ const bskyTeam = [
   "haileyok.com",
   "jessica.bsky.team",
   "aaron.bsky.team",
+  "samuel.bsky.team",
 ];
 
 type Props = {
