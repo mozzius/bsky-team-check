@@ -25,6 +25,7 @@ const bskyTeam = [
   "jessica.bsky.team",
   "aaron.bsky.team",
   "samuel.bsky.team",
+  "matthieu.bsky.team",
 ];
 
 type Props = {
