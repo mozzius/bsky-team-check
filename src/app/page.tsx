@@ -8,25 +8,24 @@ import { getAgent } from "~/lib/agent";
 const agent = getAgent();
 
 const bskyTeam = [
-  "jay.bsky.team",
-  "pfrazee.com",
-  "divy.zone",
-  "dholms.xyz",
-  "bnewbold.net",
-  "rose.bsky.team",
-  "why.bsky.team",
-  "jacob.gold",
-  "emilyliu.me",
-  "jaz.bsky.social",
-  "esb.lol",
-  "foysal.codes",
-  "danabra.mov",
-  "haileyok.com",
-  "jessica.bsky.team",
-  "aaron.bsky.team",
-  "samuel.bsky.team",
-  "matthieu.bsky.team",
-];
+  "did:plc:oky5czdrnfjpqslsw2a5iclo", // jay.bsky.team
+  "did:plc:ragtjsm2j2vknwkz3zp4oxrd", // pfrazee.com
+  "did:plc:l3rouwludahu3ui3bt66mfvj", // divy.zone
+  "did:plc:yk4dd2qkboz2yv6tpubpc6co", // dholms.xyz
+  "did:plc:44ybard66vv44zksje25o7dz", // bnewbold.net
+  "did:plc:qjeavhlw222ppsre4rscd3n2", // rose.bsky.team
+  "did:plc:vpkhqolt662uhesyj6nxm7ys", // why.bsky.team
+  "did:plc:vjug55kidv6sye7ykr5faxxn", // emilyliu.me
+  "did:plc:q6gjnaw2blty4crticxkmujt", // jaz.bsky.social
+  "did:plc:3jpt2mvvsumj2r7eqk4gzzjz", // esb.lol
+  "did:plc:upo6iq6ekh66d4mbhmiy6se4", // foysal.codes
+  "did:plc:fpruhuo22xkm5o7ttr2ktxdo", // danabra.mov
+  "did:plc:oisofpd7lj26yvgiivf3lxsi", // haileyok.com
+  "did:plc:tl7zqgil2irwndwojsxszceb", // jessica.bsky.team
+  "did:plc:ksjfbda7262bbqmuoly54lww", // aaron.bsky.team
+  "did:plc:p2cp5gopk7mgjegy6wadk3ep", // samuel.bsky.team
+  "did:plc:linrigsaay5zenhg756ca6tg" // matthieu.bsky.team
+]
 
 type Props = {
   searchParams?: {
@@ -87,11 +86,11 @@ export default async function Home({ searchParams }: Props) {
                         : -1)) *
                     -1
                 )
-                .filter((person) => person.handle !== profile.data.handle)
+                .filter((person) => person.did !== profile.data.did)
                 .map((person) => (
                   <li key={person.did}>
                     <a
-                      href={`https://bsky.app/profile/${person.handle}`}
+                      href={`https://bsky.app/profile/${person.did}`}
                       target="_blank"
                       rel="noreferrer"
                       className="flex items-center gap-1 hover:underline"
